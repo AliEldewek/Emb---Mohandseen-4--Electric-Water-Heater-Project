@@ -790,26 +790,26 @@ END GROUP
  .debug_frame   0x000002b8       0xa4 MCAL/SYS/src/Sys.o
  .debug_frame   0x0000035c       0x54 MCAL/TIMER/src/Timer.o
 
-.debug_str      0x00000000      0x6a6
+.debug_str      0x00000000      0x707
  *(.debug_str)
  .debug_str     0x00000000      0x196 C:/Program Files (x86)/Atmel/Studio/7.0/Packs/atmel/ATmega_DFP/1.7.374/gcc/dev/atmega32/avr5/crtatmega32.o
- .debug_str     0x00000196      0x242 main.o
-                                0x27f (size before relaxing)
- .debug_str     0x000003d8       0x35 MCAL/ADC/src/ADC.o
+ .debug_str     0x00000196      0x245 main.o
+                                0x282 (size before relaxing)
+ .debug_str     0x000003db       0x93 MCAL/ADC/src/ADC.o
                                 0x1c0 (size before relaxing)
- .debug_str     0x0000040d       0x8e MCAL/buttons/src/buttons.o
+ .debug_str     0x0000046e       0x8e MCAL/buttons/src/buttons.o
                                 0x206 (size before relaxing)
- .debug_str     0x0000049b       0x72 MCAL/cool_heat_elements/src/Cool_Heat_Elements.o
+ .debug_str     0x000004fc       0x72 MCAL/cool_heat_elements/src/Cool_Heat_Elements.o
                                 0x1ea (size before relaxing)
- .debug_str     0x0000050d       0x35 MCAL/EEPROM/src/EEPROM.o
+ .debug_str     0x0000056e       0x35 MCAL/EEPROM/src/EEPROM.o
                                 0x1d1 (size before relaxing)
- .debug_str     0x00000542       0x2e MCAL/LED/src/LED.o
+ .debug_str     0x000005a3       0x2e MCAL/LED/src/LED.o
                                 0x1a6 (size before relaxing)
- .debug_str     0x00000570       0x75 MCAL/SSD_DISP/src/SSD_disp.o
-                                0x263 (size before relaxing)
- .debug_str     0x000005e5       0x94 MCAL/SYS/src/Sys.o
-                                0x3ae (size before relaxing)
- .debug_str     0x00000679       0x2d MCAL/TIMER/src/Timer.o
+ .debug_str     0x000005d1       0x75 MCAL/SSD_DISP/src/SSD_disp.o
+                                0x266 (size before relaxing)
+ .debug_str     0x00000646       0x94 MCAL/SYS/src/Sys.o
+                                0x3b1 (size before relaxing)
+ .debug_str     0x000006da       0x2d MCAL/TIMER/src/Timer.o
                                 0x1cf (size before relaxing)
 
 .debug_loc      0x00000000      0x58f
