@@ -1,11 +1,3 @@
-/*
- * ssd.h
- *
- *  Author: Mostafa Ghazolley
- *  Atmel Studio 7.0
- */ 
-
-
 #ifndef SSD_H_
 #define SSD_H_
 
