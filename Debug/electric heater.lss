@@ -23,11 +23,11 @@ Idx Name          Size      VMA       LMA       File off  Algn
                   CONTENTS, READONLY, DEBUGGING
   9 .debug_frame  000003b0  00000000  00000000  00003df0  2**2
                   CONTENTS, READONLY, DEBUGGING
- 10 .debug_str    000006a6  00000000  00000000  000041a0  2**0
+ 10 .debug_str    00000707  00000000  00000000  000041a0  2**0
                   CONTENTS, READONLY, DEBUGGING
- 11 .debug_loc    0000058f  00000000  00000000  00004846  2**0
+ 11 .debug_loc    0000058f  00000000  00000000  000048a7  2**0
                   CONTENTS, READONLY, DEBUGGING
- 12 .debug_ranges 00000198  00000000  00000000  00004dd5  2**0
+ 12 .debug_ranges 00000198  00000000  00000000  00004e36  2**0
                   CONTENTS, READONLY, DEBUGGING
 
 Disassembly of section .text:
@@ -284,165 +284,87 @@ ISR(TIMER0_COMP_vect){
  1a0:	18 95       	reti
 
 000001a2 <ADC_init>:
-
-void ADC_init(){
-	
-	/* Choosing reference voltage option.
-	the AVCC pin with a capacitor at the AREF pin.*/
-	SET_BIT(ADMUX,REFS0);
  1a2:	87 b1       	in	r24, 0x07	; 7
  1a4:	80 64       	ori	r24, 0x40	; 64
  1a6:	87 b9       	out	0x07, r24	; 7
-	
-	/*Choosing Channel One (Single Ended In.) at A0 pin.*/
-	CLEAR_BIT(ADMUX,MUX0);
  1a8:	87 b1       	in	r24, 0x07	; 7
  1aa:	8e 7f       	andi	r24, 0xFE	; 254
  1ac:	87 b9       	out	0x07, r24	; 7
-	CLEAR_BIT(ADMUX,MUX1);
  1ae:	87 b1       	in	r24, 0x07	; 7
  1b0:	8d 7f       	andi	r24, 0xFD	; 253
  1b2:	87 b9       	out	0x07, r24	; 7
-	CLEAR_BIT(ADMUX,MUX2);
  1b4:	87 b1       	in	r24, 0x07	; 7
  1b6:	8b 7f       	andi	r24, 0xFB	; 251
  1b8:	87 b9       	out	0x07, r24	; 7
-	CLEAR_BIT(ADMUX,MUX3);
  1ba:	87 b1       	in	r24, 0x07	; 7
  1bc:	87 7f       	andi	r24, 0xF7	; 247
  1be:	87 b9       	out	0x07, r24	; 7
-	CLEAR_BIT(ADMUX,MUX4);
  1c0:	87 b1       	in	r24, 0x07	; 7
  1c2:	8f 7e       	andi	r24, 0xEF	; 239
  1c4:	87 b9       	out	0x07, r24	; 7
-	
-	/* Choosing the Data to be Right Adjusted in the Data Reg.*/
-	CLEAR_BIT(ADMUX,ADLAR);
  1c6:	87 b1       	in	r24, 0x07	; 7
  1c8:	8f 7d       	andi	r24, 0xDF	; 223
  1ca:	87 b9       	out	0x07, r24	; 7
-	
-	/* Choosing Prescaler for the ADC clock.
-	 the following is choosing (2) as a Prescaler.*/
-	SET_BIT(ADCSRA,ADPS0);
  1cc:	86 b1       	in	r24, 0x06	; 6
  1ce:	81 60       	ori	r24, 0x01	; 1
  1d0:	86 b9       	out	0x06, r24	; 6
-	CLEAR_BIT(ADCSRA,ADPS1);
  1d2:	86 b1       	in	r24, 0x06	; 6
  1d4:	8d 7f       	andi	r24, 0xFD	; 253
  1d6:	86 b9       	out	0x06, r24	; 6
-	CLEAR_BIT(ADCSRA,ADPS2);
  1d8:	86 b1       	in	r24, 0x06	; 6
  1da:	8b 7f       	andi	r24, 0xFB	; 251
  1dc:	86 b9       	out	0x06, r24	; 6
-	
-	/* Enable the ADC*/
-	SET_BIT(ADCSRA,ADEN);
  1de:	86 b1       	in	r24, 0x06	; 6
  1e0:	80 68       	ori	r24, 0x80	; 128
  1e2:	86 b9       	out	0x06, r24	; 6
  1e4:	08 95       	ret
 
 000001e6 <ADC_read>:
-uint_16 ADC_read(){
-	
-	uint_16 data;
-	
-	/* Start Conversion*/
-	SET_BIT(ADCSRA,ADSC);
  1e6:	86 b1       	in	r24, 0x06	; 6
  1e8:	80 64       	ori	r24, 0x40	; 64
  1ea:	86 b9       	out	0x06, r24	; 6
-	
-	// Wait for flag to be set.
-	// Indication of finished conversion
-	while(is_bit_clr(ADCSRA,ADIF));
  1ec:	30 9b       	sbis	0x06, 0	; 6
  1ee:	fe cf       	rjmp	.-4      	; 0x1ec <ADC_read+0x6>
-	
-	/* Read Data from the ADC Data Register
-	 Read the Low register first!*/
-	data = ADCL;
  1f0:	34 b1       	in	r19, 0x04	; 4
-	data |= (ADCH<<8);
  1f2:	85 b1       	in	r24, 0x05	; 5
  1f4:	90 e0       	ldi	r25, 0x00	; 0
  1f6:	98 2f       	mov	r25, r24
  1f8:	88 27       	eor	r24, r24
-	
-	/* Clear Flag (As we are not using the interrupt)
-	 It won't be cleared automatically!*/
-	SET_BIT(ADCSRA,ADIF);
  1fa:	26 b1       	in	r18, 0x06	; 6
  1fc:	20 61       	ori	r18, 0x10	; 16
  1fe:	26 b9       	out	0x06, r18	; 6
-	
-	return data;	
  200:	83 2b       	or	r24, r19
  202:	08 95       	ret
 
 00000204 <Buttons_init>:
-for the ON/OFF button.*/
-
-
-void Buttons_init(void){
-	/* Setting the pins as INPUT pins*/
-	CLEAR_BIT(B_PORT_DIR,ON_OFF_PIN);
  204:	87 b3       	in	r24, 0x17	; 23
  206:	8b 7f       	andi	r24, 0xFB	; 251
  208:	87 bb       	out	0x17, r24	; 23
-	CLEAR_BIT(B_PORT_DIR,UP_PIN);
  20a:	87 b3       	in	r24, 0x17	; 23
  20c:	8d 7f       	andi	r24, 0xFD	; 253
  20e:	87 bb       	out	0x17, r24	; 23
-	CLEAR_BIT(B_PORT_DIR,DOWN_PIN);	
  210:	87 b3       	in	r24, 0x17	; 23
  212:	87 7f       	andi	r24, 0xF7	; 247
  214:	87 bb       	out	0x17, r24	; 23
-	
-	/*Enable internal Pull-Up Resistor*/
-	
-	SET_BIT(B_PORT,ON_OFF_PIN);
  216:	88 b3       	in	r24, 0x18	; 24
  218:	84 60       	ori	r24, 0x04	; 4
  21a:	88 bb       	out	0x18, r24	; 24
-	SET_BIT(B_PORT,UP_PIN);
  21c:	88 b3       	in	r24, 0x18	; 24
  21e:	82 60       	ori	r24, 0x02	; 2
  220:	88 bb       	out	0x18, r24	; 24
-	SET_BIT(B_PORT,DOWN_PIN);
  222:	88 b3       	in	r24, 0x18	; 24
  224:	88 60       	ori	r24, 0x08	; 8
  226:	88 bb       	out	0x18, r24	; 24
-	
-	/*This Following Section is for the external interrupt
-	 assigned to the ON/OFF Button.*/
-	
-	/*Enable Global Interrupt bit*/
-	sei();
  228:	78 94       	sei
-	
-	/* Trigger with Rising Edge*/
-	SET_BIT(MCUCSR,ISC2);
  22a:	84 b7       	in	r24, 0x34	; 52
  22c:	80 64       	ori	r24, 0x40	; 64
  22e:	84 bf       	out	0x34, r24	; 52
-	
-	/*Enable INT2 (External Interrupt)*/
-	SET_BIT(GICR,INT2);
  230:	8b b7       	in	r24, 0x3b	; 59
  232:	80 62       	ori	r24, 0x20	; 32
  234:	8b bf       	out	0x3b, r24	; 59
  236:	08 95       	ret
 
 00000238 <UP_pressed>:
-/*To check if UP button is pressed or not and return the result.*/
-
-
-unsigned char UP_pressed(void){
-	/* Check if pressed for the first time*/
-	if(!(READ_BIT(PINB,UP_PIN))){
  238:	b1 99       	sbic	0x16, 1	; 22
  23a:	0a c0       	rjmp	.+20     	; 0x250 <UP_pressed+0x18>
 	#else
@@ -457,41 +379,16 @@ unsigned char UP_pressed(void){
  242:	f1 f7       	brne	.-4      	; 0x240 <UP_pressed+0x8>
  244:	00 c0       	rjmp	.+0      	; 0x246 <UP_pressed+0xe>
  246:	00 00       	nop
-		/* wait for 50 ms to make sure it's pressed (debouncing solution)*/
-		_delay_ms(DEBOUNCE_INTERVAL);
-		
-		/* check one more time*/
-		if (!(READ_BIT(PINB,UP_PIN))){
  248:	b1 99       	sbic	0x16, 1	; 22
  24a:	04 c0       	rjmp	.+8      	; 0x254 <UP_pressed+0x1c>
-			return PRESSED;
  24c:	81 e0       	ldi	r24, 0x01	; 1
  24e:	08 95       	ret
-		}
-		else return NOT_PRESSED;
-	}
-	else return NOT_PRESSED;	
  250:	80 e0       	ldi	r24, 0x00	; 0
  252:	08 95       	ret
-		
-		/* check one more time*/
-		if (!(READ_BIT(PINB,UP_PIN))){
-			return PRESSED;
-		}
-		else return NOT_PRESSED;
  254:	80 e0       	ldi	r24, 0x00	; 0
-	}
-	else return NOT_PRESSED;	
-}
  256:	08 95       	ret
 
 00000258 <DOWN_pressed>:
-
-/* To check if DOWN button is pressed or not and return the result.*/
-
-unsigned char DOWN_pressed(void){
-	/* Check if pressed for the first time*/
-	if(!(READ_BIT(PINB,DOWN_PIN))){
  258:	b3 99       	sbic	0x16, 3	; 22
  25a:	0a c0       	rjmp	.+20     	; 0x270 <DOWN_pressed+0x18>
  25c:	87 ea       	ldi	r24, 0xA7	; 167
@@ -500,222 +397,104 @@ unsigned char DOWN_pressed(void){
  262:	f1 f7       	brne	.-4      	; 0x260 <DOWN_pressed+0x8>
  264:	00 c0       	rjmp	.+0      	; 0x266 <DOWN_pressed+0xe>
  266:	00 00       	nop
-		/* wait for 50 ms to make sure it's pressed (debouncing solution)*/
-		_delay_ms(DEBOUNCE_INTERVAL);
-	
-		/*check one more time*/
-		if (!(READ_BIT(PINB,DOWN_PIN))){
  268:	b3 99       	sbic	0x16, 3	; 22
  26a:	04 c0       	rjmp	.+8      	; 0x274 <DOWN_pressed+0x1c>
-			return PRESSED;
  26c:	81 e0       	ldi	r24, 0x01	; 1
  26e:	08 95       	ret
-		}
-		else return NOT_PRESSED;
-	}
-	else return NOT_PRESSED;
  270:	80 e0       	ldi	r24, 0x00	; 0
  272:	08 95       	ret
-	
-		/*check one more time*/
-		if (!(READ_BIT(PINB,DOWN_PIN))){
-			return PRESSED;
-		}
-		else return NOT_PRESSED;
  274:	80 e0       	ldi	r24, 0x00	; 0
-	}
-	else return NOT_PRESSED;
-}
  276:	08 95       	ret
 
 00000278 <heat_init>:
-
-#include "BIT_MATH.h"
-#include "Cool_Heat_Elements.h"
-
-void heat_init(void){
-	SET_BIT(HEAT_PORT_DIR,HEAT_PIN);
  278:	87 b3       	in	r24, 0x17	; 23
  27a:	80 61       	ori	r24, 0x10	; 16
  27c:	87 bb       	out	0x17, r24	; 23
  27e:	08 95       	ret
 
 00000280 <cool_init>:
-}
-
-void cool_init(void){
-	SET_BIT(COOL_PORT_DIR,COOL_PIN);
  280:	87 b3       	in	r24, 0x17	; 23
  282:	80 62       	ori	r24, 0x20	; 32
  284:	87 bb       	out	0x17, r24	; 23
  286:	08 95       	ret
 
 00000288 <heat_start>:
-
-
-/*To start the Heater OR the Cooler.*/
-
-void heat_start(void){
-	SET_BIT(HEAT_PORT,HEAT_PIN);
  288:	88 b3       	in	r24, 0x18	; 24
  28a:	80 61       	ori	r24, 0x10	; 16
  28c:	88 bb       	out	0x18, r24	; 24
  28e:	08 95       	ret
 
 00000290 <cool_start>:
-}
-
-void cool_start(void){
-	SET_BIT(COOL_PORT,COOL_PIN);
  290:	88 b3       	in	r24, 0x18	; 24
  292:	80 62       	ori	r24, 0x20	; 32
  294:	88 bb       	out	0x18, r24	; 24
  296:	08 95       	ret
 
 00000298 <heat_stop>:
-
-
-/*  To stop Heater OR Cooler from working.*/
-
-void heat_stop(void){
-	CLEAR_BIT(HEAT_PORT,HEAT_PIN);
  298:	88 b3       	in	r24, 0x18	; 24
  29a:	8f 7e       	andi	r24, 0xEF	; 239
  29c:	88 bb       	out	0x18, r24	; 24
  29e:	08 95       	ret
 
 000002a0 <cool_stop>:
-}
-
-void cool_stop(void){
-	CLEAR_BIT(COOL_PORT,COOL_PIN);
  2a0:	88 b3       	in	r24, 0x18	; 24
  2a2:	8f 7d       	andi	r24, 0xDF	; 223
  2a4:	88 bb       	out	0x18, r24	; 24
  2a6:	08 95       	ret
 
 000002a8 <EEPROM_read>:
-#include "EEPROM.h"
-
-unsigned char EEPROM_read(const unsigned short addr){
-	// Setup Address Register
-	EEARL = (unsigned char)addr;
  2a8:	8e bb       	out	0x1e, r24	; 30
-	EEARH = (unsigned char)(addr>>8);
  2aa:	9f bb       	out	0x1f, r25	; 31
-	
-	// Start Reading
-	SET_BIT(EECR,EERE);
  2ac:	8c b3       	in	r24, 0x1c	; 28
  2ae:	81 60       	ori	r24, 0x01	; 1
  2b0:	8c bb       	out	0x1c, r24	; 28
-	
-	// Return Data
-	return EEDR;
  2b2:	8d b3       	in	r24, 0x1d	; 29
-}
  2b4:	08 95       	ret
 
 000002b6 <EEPROM_write>:
-
-void EEPROM_write(const unsigned short addr, unsigned char data){
-	unsigned char INT_EN=0;
-		
-	// Setup Address Register
-	EEARL = (unsigned char)addr;
  2b6:	8e bb       	out	0x1e, r24	; 30
-	EEARH = (unsigned char)(addr>>8);
  2b8:	9f bb       	out	0x1f, r25	; 31
-	
-	// Put Data in Data Register
-	EEDR = data;
  2ba:	6d bb       	out	0x1d, r22	; 29
-	
-	// Disable Interrupts to work fine
-	if(((SREG&(1<<7))>>7)==1){
  2bc:	0f b6       	in	r0, 0x3f	; 63
  2be:	07 fe       	sbrs	r0, 7
  2c0:	05 c0       	rjmp	.+10     	; 0x2cc <EEPROM_write+0x16>
-		INT_EN = 1;
-		CLEAR_BIT(SREG,7);
  2c2:	8f b7       	in	r24, 0x3f	; 63
  2c4:	8f 77       	andi	r24, 0x7F	; 127
  2c6:	8f bf       	out	0x3f, r24	; 63
-	// Put Data in Data Register
-	EEDR = data;
-	
-	// Disable Interrupts to work fine
-	if(((SREG&(1<<7))>>7)==1){
-		INT_EN = 1;
  2c8:	91 e0       	ldi	r25, 0x01	; 1
  2ca:	01 c0       	rjmp	.+2      	; 0x2ce <EEPROM_write+0x18>
-	return EEDR;
-}
-
-
-void EEPROM_write(const unsigned short addr, unsigned char data){
-	unsigned char INT_EN=0;
  2cc:	90 e0       	ldi	r25, 0x00	; 0
-		INT_EN = 1;
-		CLEAR_BIT(SREG,7);
-	}
-	
-	// Start Writing
-	SET_BIT(EECR,EEMWE);
  2ce:	8c b3       	in	r24, 0x1c	; 28
  2d0:	84 60       	ori	r24, 0x04	; 4
  2d2:	8c bb       	out	0x1c, r24	; 28
-	SET_BIT(EECR,EEWE);
  2d4:	8c b3       	in	r24, 0x1c	; 28
  2d6:	82 60       	ori	r24, 0x02	; 2
  2d8:	8c bb       	out	0x1c, r24	; 28
-	while(((EECR&(1<<EEWE))>>EEWE)==1);
  2da:	e1 99       	sbic	0x1c, 1	; 28
  2dc:	fe cf       	rjmp	.-4      	; 0x2da <EEPROM_write+0x24>
-	
-	// Back
-	if (INT_EN==1)
  2de:	91 30       	cpi	r25, 0x01	; 1
  2e0:	19 f4       	brne	.+6      	; 0x2e8 <EEPROM_write+0x32>
-	{
-		SET_BIT(SREG,7);
  2e2:	8f b7       	in	r24, 0x3f	; 63
  2e4:	80 68       	ori	r24, 0x80	; 128
  2e6:	8f bf       	out	0x3f, r24	; 63
  2e8:	08 95       	ret
 
 000002ea <led_init>:
-	
-	/* PIN 0 in the port is an output pin*/
-	
-	// the LED pin is initially off
-	
-	SET_BIT(LED_PORT_DIR,LED_PIN);
  2ea:	87 b3       	in	r24, 0x17	; 23
  2ec:	81 60       	ori	r24, 0x01	; 1
  2ee:	87 bb       	out	0x17, r24	; 23
-	CLEAR_BIT(LED_PORT,LED_PIN);
  2f0:	88 b3       	in	r24, 0x18	; 24
  2f2:	8e 7f       	andi	r24, 0xFE	; 254
  2f4:	88 bb       	out	0x18, r24	; 24
  2f6:	08 95       	ret
 
 000002f8 <led_on>:
-
-}
-
-void led_on(void){
-	SET_BIT(LED_PORT,LED_PIN);
  2f8:	88 b3       	in	r24, 0x18	; 24
  2fa:	81 60       	ori	r24, 0x01	; 1
  2fc:	88 bb       	out	0x18, r24	; 24
  2fe:	08 95       	ret
 
 00000300 <led_off>:
-}
-
-void led_off(void){
-	CLEAR_BIT(LED_PORT,LED_PIN);
  300:	88 b3       	in	r24, 0x18	; 24
  302:	8e 7f       	andi	r24, 0xFE	; 254
  304:	88 bb       	out	0x18, r24	; 24
@@ -1367,12 +1146,6 @@ void OFF_state(void){
  6a4:	08 95       	ret
 
 000006a6 <timer1_init>:
-}
-
-void timer1_INT_disable(void){
-	
-	/* Disable Interrupts when Comparing with values A and B */
-	CLEAR_BIT(TIMSK,OCIE1A);
  6a6:	8e b5       	in	r24, 0x2e	; 46
  6a8:	88 60       	ori	r24, 0x08	; 8
  6aa:	8e bd       	out	0x2e, r24	; 46
@@ -1410,12 +1183,6 @@ void timer1_INT_disable(void){
  6e6:	08 95       	ret
 
 000006e8 <timer1_INT_enable>:
-}
-
-void timer1_INT_enable(void){
-	
-	/* Enable Interrupts when Comparing with values A and B */
-	SET_BIT(TIMSK,OCIE1A);
  6e8:	89 b7       	in	r24, 0x39	; 57
  6ea:	80 61       	ori	r24, 0x10	; 16
  6ec:	89 bf       	out	0x39, r24	; 57
